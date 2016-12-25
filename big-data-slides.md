@@ -1,10 +1,25 @@
-# Big Data
-# Pipelines, Technologies & Roles
-![Data Science Map](https://pbs.twimg.com/media/CA-bxOoWcAAlelp.jpg)
+# Big Data (Wikipedia's definition)
+- **Volume**: big data doesn't sample; it just observes and tracks what happens
+- **Velocity**: big data is often available in real-time
+- **Variety**: big data draws from text, images, audio, video; plus it completes missing pieces through data fusion
+- ***Machine Learning***: big data often doesn't ask why and simply detects patterns
+- ***Digital footprint***: big data is often a cost-free byproduct of digital interaction
 
 ***
-# Spark
 
+# Big Data on Coursera
+
+![Big Data on Coursera](./images/big-data-on-coursera-small.png)
+
+***
+
+# Pipelines, Technologies & Roles
+![Data Science Map](./images/pipelines-technologies-roles.png)
+
+***
+
+# Spark
+## [spark-notebook.io](http://spark-notebook.io)
 
 ```scala
 import org.apache.spark.sql.SQLContext
@@ -74,7 +89,7 @@ val times = btcIdeas
 
 ***
 
-На шкале времени опубликованные по биткоинам идеи выглядят так:
+## Идеи по BTCUSD на шкале времени
 
 ```scala
 ScatterChart(times.map(x => (x,x)).collect)
@@ -85,7 +100,7 @@ ScatterChart(times.map(x => (x,x)).collect)
 > res9: notebook.front.widgets.charts.ScatterChart[Array[(Double, Double)]] = <ScatterChart widget>
 -->
 
-> ![generated image 0](./images/image-0.png)
+![generated image 0](./images/image-0.png)
 
 ***
 ## Время первой и последней
@@ -122,7 +137,7 @@ val btcNewsUrls = sparkContext.textFile("data/yahoo.txt")
 
 ***
 
-Получим времена публикации новостей:
+## Parse Time
 
 ```scala
 import java.text.SimpleDateFormat
@@ -155,7 +170,8 @@ val yahooTimes = btcNewsUrls
 ***
 -->
 
-На шкале времени yahoo новости по биткоинам выглядят так:
+
+## Yahoo новости по BTCUSD на шкале времени 
 
 ```scala
 ScatterChart(yahooTimes.map(x => (x,x)))
@@ -191,6 +207,8 @@ val t = Seq(yahooTimes.min, yahooTimes.max)
 ***
 
 # Compare Ideas and News
+
+Приведём к одному формату
 
 ```scala
 val newsTimes = yahooTimes.sorted
@@ -422,6 +440,7 @@ ScatterChart(correlationsBad.toArray)
 
 ![Overfitting](http://blog.algotrading101.com/wp-content/uploads/2016/01/overfitting-comics.jpg)
 
+<!--
 ***
 
 # Train/Test set
@@ -431,3 +450,4 @@ ScatterChart(correlationsBad.toArray)
 ***
 
 ![Unicorn](https://s-media-cache-ak0.pinimg.com/736x/3f/34/50/3f34502d72842a4cb05d4665daba801d.jpg)
+-->
