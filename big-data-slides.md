@@ -49,10 +49,13 @@ import sqlContext.implicits._
 
     сurl -s "https://www.tradingview.com/chart/
     		?stream=bitcoin&time=all&s=0&l=1000"
+            
     сurl -s "https://www.tradingview.com/chart/
     		?stream=bitcoin&time=all&s=1000&l=1000"
+            
     сurl -s "https://www.tradingview.com/chart/
     		?stream=bitcoin&time=all&s=2000&l=1000"
+            
     сurl -s "https://www.tradingview.com/chart/
     		?stream=bitcoin&time=all&s=3000&l=1000"
 
@@ -417,7 +420,7 @@ ScatterChart(correlations.toArray)
 
 ***
 
-# Убедимся, что мы себя не сильно обманываем (?)
+## Убедимся, что мы не сильно обманываемся (?)
 
 ```scala
 import scala.util.Random
@@ -426,9 +429,6 @@ val correlationsBad = for (i <- 1 to 500) yield Statistics.corr(
     sc.parallelize(Random.shuffle(densitiesi drop i)),
     "spearman"
   )
-```
-
-```scala
 ScatterChart(correlationsBad.toArray)
 ```
 
