@@ -1,4 +1,13 @@
-# Big Data (Wikipedia's definition)
+<!-- $size: 16:9 -->
+<!-- page_number: true -->
+
+# <center style="font-size: 6em;">Big Data</center>
+
+### <center align="right">На примере Small Data</center>
+
+***
+
+# Big Data (определение из Wikipedia)
 - **Volume**: big data doesn't sample; it just observes and tracks what happens
 - **Velocity**: big data is often available in real-time
 - **Variety**: big data draws from text, images, audio, video; plus it completes missing pieces through data fusion
@@ -7,14 +16,14 @@
 
 ***
 
-# Big Data on Coursera
+# Big Data на Coursera
 
-![Big Data on Coursera](./images/big-data-on-coursera-small.png)
+![60% center Big Data on Coursera](./images/coursera-big-data.png)
 
 ***
 
-# Pipelines, Technologies & Roles
-![Data Science Map](./images/pipelines-technologies-roles.png)
+# Этапы, технологии, роли
+![120% center Data Science Map](./images/pipelines-technologies-roles.png)
 
 ***
 
@@ -43,32 +52,27 @@ import sqlContext.implicits._
 > -->
 
 ***
-# TradingView Ideas on BTCUSD
+# Идеи по BTCUSD на TradingView 
 
 4000 опубликованных идей получены примерно так:
 
-    сurl -s "https://www.tradingview.com/chart/
-    		?stream=bitcoin&time=all&s=0&l=1000"
+    сurl -s "https://www.tradingview.com/chart/?stream=bitcoin&time=all&s=0&l=1000"
             
-    сurl -s "https://www.tradingview.com/chart/
-    		?stream=bitcoin&time=all&s=1000&l=1000"
+    сurl -s "https://www.tradingview.com/chart/?stream=bitcoin&time=all&s=1000&l=1000"
             
-    сurl -s "https://www.tradingview.com/chart/
-    		?stream=bitcoin&time=all&s=2000&l=1000"
+    сurl -s "https://www.tradingview.com/chart/?stream=bitcoin&time=all&s=2000&l=1000"
             
-    сurl -s "https://www.tradingview.com/chart/
-    		?stream=bitcoin&time=all&s=3000&l=1000"
+    сurl -s "https://www.tradingview.com/chart/?stream=bitcoin&time=all&s=3000&l=1000"
 
 ***
-## Parse Time
+## Распарсим время
 
 
 ```scala
-val btcIdeas = 
-         sparkContext.textFile("data/1000_1_BTC_ideas.json")
-  .union(sparkContext.textFile("data/1000_2_BTC_ideas.json"))
-  .union(sparkContext.textFile("data/1000_3_BTC_ideas.json"))
-  .union(sparkContext.textFile("data/1000_4_BTC_ideas.json"))
+val btcIdeas = sparkContext.textFile("data/1000_1_BTC_ideas.json")
+  	.union(sparkContext.textFile("data/1000_2_BTC_ideas.json"))
+  	.union(sparkContext.textFile("data/1000_3_BTC_ideas.json"))
+  	.union(sparkContext.textFile("data/1000_4_BTC_ideas.json"))
 ```
 <!--
 ><pre>
@@ -105,8 +109,8 @@ ScatterChart(times.map(x => (x,x)).collect)
 
 ![generated image 0](./images/image-0.png)
 
-***
-## Время первой и последней
+
+## Время первой и последней собранной идеи
 
 ```scala
 val t = Seq(times.collect.min, times.collect.max)
@@ -114,14 +118,13 @@ val t = Seq(times.collect.min, times.collect.max)
 ```
 
 ><pre>
-> t: Seq[java.sql.Timestamp] = 
->       List(2014-07-28 19:30:18.0, 2016-12-07 19:59:13.0)
+> t: Seq[java.sql.Timestamp] = List(2014-07-28 19:30:18.0, 2016-12-07 19:59:13.0)
 
 ***
 
-# Yahoo News
+# Новости Yahoo
 
-В `data/yahoo.txt` - манипуляциями с html в текстовом редакторе собраны новости по BTCUSD в виде:
+В `data/yahoo.txt` - манипуляциями с html в текстовом редакторе собраны новости по BTCUSD в виде списка ссылок:
 
     http://finance.yahoo.com/news/exclusive-mona-el-isa-google-171602365.html
     http://finance.yahoo.com/news/exclusive-mona-el-isa-google-161420691.html
@@ -140,14 +143,13 @@ val btcNewsUrls = sparkContext.textFile("data/yahoo.txt")
 
 ***
 
-## Parse Time
+## Соберём и распарсим время новостей
 
 ```scala
 import java.text.SimpleDateFormat
 val dateFormatter = 
 	new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-val yahooTimes = btcNewsUrls
-  .flatMap(x => Try{
+val yahooTimes = btcNewsUrls.flatMap(x => Try{
     val s = scala.io.Source.fromURL(x, "utf-8")
     val res = s.getLines
     	        .filter(_.contains("datetime"))
@@ -157,9 +159,7 @@ val yahooTimes = btcNewsUrls
     res
   }.toOption)
   .flatMap(x => x)
-  .flatMap(x => "datetime=\"(.*?)\"".r
-                .findFirstMatchIn(x)
-                .map(_.group(1)))
+  .flatMap(x => "datetime=\"(.*?)\"".r.findFirstMatchIn(x).map(_.group(1)))
   .map(dateFormatter.parse(_))
   .map(_.getTime)
   .collect
@@ -185,11 +185,9 @@ ScatterChart(yahooTimes.map(x => (x,x)))
 > res14: notebook.front.widgets.charts.ScatterChart[Array[(Double, Double)]] = <ScatterChart widget>
 -->
 
-![generated image 1](./images/image-1.png)
+![center generated image 1 ](./images/image-1.png)
 
-***
-
-## Время первой и последней
+## Время первой и последней собранной новости
 
 ```scala
 val t = Seq(yahooTimes.min, yahooTimes.max)
@@ -198,20 +196,19 @@ val t = Seq(yahooTimes.min, yahooTimes.max)
 
 
 ><pre>
-> t: Seq[java.sql.Timestamp] = 
->       List(2014-06-13 18:02:44.0, 2016-11-11 17:16:02.0)
+> t: Seq[java.sql.Timestamp] = List(2014-06-13 18:02:44.0, 2016-11-11 17:16:02.0)
 
 ***
 
 # Сам BTCUSD в это время
 
-![BTCUSD](./images/tradingview-BTCUSD.png)
+![70% center BTCUSD](./images/tradingview-BTCUSD.png)
 
 ***
 
-# Compare Ideas and News
+# Сравним идеи и новости
 
-Приведём к одному формату
+Сперва приведём к одному формату
 
 ```scala
 val newsTimes = yahooTimes.sorted
@@ -221,11 +218,9 @@ val ideasTimes = times.map(_ * 1e3).collect.sorted
 <!--
 ><pre>
 > newsTimes: Array[Double] = Array(1.402668164E12, 1.404309181E12, 1.405528217E12, 1.407251318E12, 1.407760191E12, 1.408277639E12, 1.408718124E12, 1.414511631E12, 1.420800438E12, 1.421432953E12, 1.422633223E12, 1.423489141E12, 1.423838937E12, 1.424265034E12, 1.424343008E12, 1.424783196E12, 1.425035527E12, 1.425905464E12, 1.426083723E12, 1.426162721E12, 1.428581968E12, 1.431001563E12, 1.43109034E12, 1.431358289E12, 1.431527275E12, 1.432729179E12, 1.433153514E12, 1.433256767E12, 1.433416825E12, 1.433493452E12, 1.433839869E12, 1.433927704E12, 1.434368311E12, 1.435220818E12, 1.435307102E12, 1.436170775E12, 1.436436416E12, 1.436520077E12, 1.436536313E12, 1.436884105E12, 1.43695033E12, 1.437465023E12, 1.437572223E12, 1.437639285E12, 1.438173761E12, 1.43867558E12, 1.438849314E12, 1.438873228E12,...
--->
 
 ***
-
-## Выведем новости и идеи на одном графике.
+## Выведем идеи и новости на одном графике.
 
 ```scala
 val both = for {
@@ -236,19 +231,20 @@ val both = for {
 ScatterChart(both.filter(x => scala.math.random > 0.78).toSeq)
 ```
 
-<!--
+
 ><pre>
 > both: Iterator[(Double, Double)] = empty iterator
 > res18: notebook.front.widgets.charts.ScatterChart[Seq[(Double, Double)]] = <ScatterChart widget>
--->
+
 
 ![generated image 2](./images/image-2.png)
 
 Рост вверх - новость, рост вправо - идея.
+-->
 
 ***
 
-# Statistics
+## Статистика
 
 Сравнивать точки во времени не совсем понятно как.
 Будем сравнивать плотности вероятностей.
@@ -259,20 +255,15 @@ import org.apache.spark.rdd.RDD
 
 def myKernelDensity(arr: Array[Double]): KernelDensity = {
   val data = sc.parallelize(arr)
-  new KernelDensity()
-    .setSample(data)
-    .setBandwidth(3e8)
+  new KernelDensity().setSample(data).setBandwidth(3e8)
 }
 
 val kdi = myKernelDensity(ideasTimes)
 val kdn = myKernelDensity(newsTimes)
 
-// Find density estimates for the given values
-// 14100 to 14800 * 1e8 - time: 06 Sep 2014 - 24 Nov 2016
-val densitiesi = kdi.estimate(
-		    (14100 to 14800).map(_ * 1e8).toArray)
-val densitiesn = kdn.estimate(
-		    (14100 to 14800).map(_ * 1e8).toArray)
+// 14100 to 14800 * 1e8 - it is time: 06 Sep 2014 - 24 Nov 2016
+val densitiesi = kdi.estimate((14100 to 14800).map(_ * 1e8).toArray)
+val densitiesn = kdn.estimate((14100 to 14800).map(_ * 1e8).toArray)
 ```
 
 <!--
@@ -292,11 +283,9 @@ val densitiesn = kdn.estimate(
 ## На графике
 
 ```scala
-val newsAndIdeasForChart = (densitiesn zip densitiesi)
-  .zipWithIndex
-  .flatMap{ 
-    case ((x,y), i) => Seq((i, x, "news"), (i, y, "ideas"))
-  }
+val newsAndIdeasForChart = (densitiesn zip densitiesi).zipWithIndex
+  .flatMap{ case ((x,y), i) => Seq((i, x, "news"), (i, y, "ideas")) }
+  
 ScatterChart(newsAndIdeasForChart, 
              fields=Some(("_1", "_2")),
              groupField=Some("_3"),
@@ -316,9 +305,7 @@ ScatterChart(newsAndIdeasForChart,
 ## В другом виде
 
 ```scala
-ScatterChart(
-  (densitiesi zip densitiesn).filter(_._2 >= 1e-13)
-)
+ScatterChart((densitiesi zip densitiesn).filter(_._2 >= 1e-13))
 ```
 
 <!--
@@ -330,7 +317,7 @@ ScatterChart(
 
 ***
 
-# Correlation
+# Корреляция
 
 ```scala
 import org.apache.spark.mllib.linalg._
@@ -418,6 +405,19 @@ ScatterChart(correlations.toArray)
 ![generated image 5](./images/image-5.png)
 
 
+
+***
+
+# Overfitting
+
+![200% center Overfitting](http://blog.algotrading101.com/wp-content/uploads/2016/01/overfitting-comics.jpg)
+
+***
+
+# Этапы, технологии, роли (2)
+![120% center Data Science Map](./images/pipelines-technologies-roles.png)
+
+<!--
 ***
 
 ## Убедимся, что мы не сильно обманываемся (?)
@@ -436,13 +436,6 @@ ScatterChart(correlationsBad.toArray)
 
 ***
 
-# Overfitting
-
-![Overfitting](http://blog.algotrading101.com/wp-content/uploads/2016/01/overfitting-comics.jpg)
-
-<!--
-***
-
 # Train/Test set
 
 ![More points](http://www.kdnuggets.com/wp-content/uploads/linear-model-vs-polynomial-more-points.jpg)
@@ -451,3 +444,15 @@ ScatterChart(correlationsBad.toArray)
 
 ![Unicorn](https://s-media-cache-ak0.pinimg.com/736x/3f/34/50/3f34502d72842a4cb05d4665daba801d.jpg)
 -->
+
+***
+
+# Для чего можно это использовать
+
+- Публиковать блог-посты с анализом социальной активности.
+- Рекомендовать пользователей, на которых надо подписаться
+- Рекомендовать похожие опубликованные идеи.
+- Сделать социальный датафид на наших чартах, выводящий KernelDensity новостей.
+- Построить супер-мега-выигрышную стратегию на основе собранных знаний пользователей.
+
+
