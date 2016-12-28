@@ -5,20 +5,16 @@
 
 ### <center align="right">На примере Small Data</center>
 
+Поздняков Алексей ([@av_elier](https://twitter.com/av_elier))
+
 ***
 
 # Big Data (определение из Wikipedia)
-- **Volume**: big data doesn't sample; it just observes and tracks what happens
-- **Velocity**: big data is often available in real-time
-- **Variety**: big data draws from text, images, audio, video; plus it completes missing pieces through data fusion
-- ***Machine Learning***: big data often doesn't ask why and simply detects patterns
-- ***Digital footprint***: big data is often a cost-free byproduct of digital interaction
-
-***
-
-# Big Data на Coursera
-
-![60% center Big Data on Coursera](./images/coursera-big-data.png)
+- <span style="font-size: 1.7em;">**Объём**</span> **(Volume)**: big data doesn't sample; it just observes and tracks what happens
+- <span style="font-size: 1.7em;">**Скорость**</span> **(Velocity)**: big data is often available in real-time
+- <span style="font-size: 1.7em;">**Многообразие**</span> **(Variety)**: big data draws from text, images, audio, video; plus it completes missing pieces through data fusion
+- <span style="font-size: 1.4em;">***Машинное обучение***</span> ***(Machine Learning)***: big data often doesn't ask why and simply detects patterns
+- <span style="font-size: 1.4em;">***Цифровой след***</span> ***(Digital footprint)***: big data is often a cost-free byproduct of digital interaction
 
 ***
 
@@ -27,8 +23,9 @@
 
 ***
 
-# Spark
+![90% Spark](http://spark.apache.org/images/spark-logo-trademark.png)                                                                 ![100%](http://spark.apache.org/images/logistic-regression.png)
 ## [spark-notebook.io](http://spark-notebook.io)
+
 
 ```scala
 import org.apache.spark.sql.SQLContext
@@ -199,16 +196,19 @@ val t = Seq(yahooTimes.min, yahooTimes.max)
 > t: Seq[java.sql.Timestamp] = List(2014-06-13 18:02:44.0, 2016-11-11 17:16:02.0)
 
 ***
-
+<!--
 # Сам BTCUSD в это время
 
 ![70% center BTCUSD](./images/tradingview-BTCUSD.png)
 
 ***
+-->
 
 # Сравним идеи и новости
 
-Сперва приведём к одному формату
+## И попробуем найти корреляцию
+
+Но сперва приведём к одному формату
 
 ```scala
 val newsTimes = yahooTimes.sorted
@@ -244,10 +244,8 @@ ScatterChart(both.filter(x => scala.math.random > 0.78).toSeq)
 
 ***
 
-## Статистика
+## Плотность вероятностей
 
-Сравнивать точки во времени не совсем понятно как.
-Будем сравнивать плотности вероятностей.
 
 ```scala
 import org.apache.spark.mllib.stat.KernelDensity
@@ -265,6 +263,11 @@ val kdn = myKernelDensity(newsTimes)
 val densitiesi = kdi.estimate((14100 to 14800).map(_ * 1e8).toArray)
 val densitiesn = kdn.estimate((14100 to 14800).map(_ * 1e8).toArray)
 ```
+
+```scala
+(densitiesn.sum * 1e8, densitiesi.sum * 1e8)
+```
+><pre> res292: (Double, Double) = (0.9816, 0.96053)
 
 <!--
 ***
@@ -318,20 +321,13 @@ ScatterChart((densitiesi zip densitiesn).filter(_._2 >= 1e-13))
 ***
 
 # Корреляция
+![60%](./images/corr_1.png)                        ![60%](./images/corr_0.png)                     ![60%](./images/corr_-1.png)
+`1` - прямая зависимость                 `0` - независимые                 `-1` - обратная зависимость
+
 
 ```scala
 import org.apache.spark.mllib.linalg._
 import org.apache.spark.mllib.stat.Statistics
-```
-
-<!--
-><pre>
-> import org.apache.spark.mllib.linalg._
-> import org.apache.spark.mllib.stat.Statistics
--->
-
-
-```scala
 val correlation: Double = Statistics.corr(
   sc.parallelize(densitiesi),
   sc.parallelize(densitiesn),
@@ -413,46 +409,44 @@ ScatterChart(correlations.toArray)
 ![200% center Overfitting](http://blog.algotrading101.com/wp-content/uploads/2016/01/overfitting-comics.jpg)
 
 ***
+# Плотность вероятностей - AAPL
+![90% center Data Science Map](./images/aapl-image-3.png)
+![90% center Data Science Map](./images/aapl-image-4.png)
+***
+# Корреляция - AAPL
+![100% center Data Science Map](./images/aapl-image-5.png)
+***
 
 # Этапы, технологии, роли (2)
 ![120% center Data Science Map](./images/pipelines-technologies-roles.png)
 
-<!--
 ***
 
-## Убедимся, что мы не сильно обманываемся (?)
-
-```scala
-import scala.util.Random
-val correlationsBad = for (i <- 1 to 500) yield Statistics.corr(
-    sc.parallelize(densitiesi drop i),
-    sc.parallelize(Random.shuffle(densitiesi drop i)),
-    "spearman"
-  )
-ScatterChart(correlationsBad.toArray)
-```
-
-![generated image 6](./images/image-6.png)
-
-***
-
-# Train/Test set
-
-![More points](http://www.kdnuggets.com/wp-content/uploads/linear-model-vs-polynomial-more-points.jpg)
-
-***
-
-![Unicorn](https://s-media-cache-ak0.pinimg.com/736x/3f/34/50/3f34502d72842a4cb05d4665daba801d.jpg)
--->
-
-***
-
-# Для чего можно это использовать
+# Для чего Big Data можно использовать
 
 - Публиковать блог-посты с анализом социальной активности.
 - Рекомендовать пользователей, на которых надо подписаться
 - Рекомендовать похожие опубликованные идеи.
-- Сделать социальный датафид на наших чартах, выводящий KernelDensity новостей.
-- Построить супер-мега-выигрышную стратегию на основе собранных знаний пользователей.
+- Сделать социальный датафид, выводящий на наших чартах плотность вероятности новостей.
+- Построить *супер-мега-выигрышную стратегию* на основе обобщённых знаний пользователей.
+
+***
+
+# Big Data на Coursera
+
+![60% center Big Data on Coursera](./images/coursera-big-data.png)
 
 
+***
+
+# Спасибо за внимание
+<div> </div>
+
+## Вопросы?
+
+<div> </div><div> </div>
+
+
+Слайды и код: https://github.com/av-elier/tradingview-meetup-big-data
+
+Поздняков Алексей ([@av_elier](https://twitter.com/av_elier))
