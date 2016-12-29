@@ -447,6 +447,6 @@ ScatterChart(correlations.toArray)
 <div> </div><div> </div>
 
 
-Слайды и код: https://github.com/av-elier/tradingview-meetup-big-data
+### Слайды и код: https://github.com/av-elier/tradingview-meetup-big-data
 
-Поздняков Алексей ([@av_elier](https://twitter.com/av_elier))
+### Поздняков Алексей ([@av_elier](https://twitter.com/av_elier))
